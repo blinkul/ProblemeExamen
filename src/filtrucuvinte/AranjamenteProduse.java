@@ -11,26 +11,53 @@ public class AranjamenteProduse {
     public static void main(String[] args) {
 
         String input = scanner.nextLine();
-        int k = Integer.valueOf(input.split(" ")[0]);
-        int M = Integer.parseUnsignedInt(input.split(" ")[1]);
+        long k = Long.valueOf(input.split(" ")[0]);
+        long M = Long.parseUnsignedLong(input.split(" ")[1]);
 
-        if (k < 1 || k > 12) {
-            System.out.println("value of k should be between 1 and 12");
-        }
+        System.out.println(calculate(k,M));
 
-        if (M < 0 || M > Integer.MAX_VALUE) {
-            System.out.println("value of M should be between 0 and " + Integer.MAX_VALUE);
-        }
 
+//        System.out.println(Long.MAX_VALUE);
+//        int i = 1;
+//
+//        while (i < 40) {
+//            System.out.println("i = " + i + "; Factorial = " + factorial(i));
+//
+//            i++;
+//        }
 
     }
 
-    private static int calculate(int k, int M) {
-        int n = 0;
+    private static long calculate(long k, long M) {
+        long n = k;
+        long result = 0;
 
-        // M = n! / (n-k)!
+        result = factorial(n) / factorial(n-k);
 
-        return n;
+        while (M < 4294967295L && result < M) {
+
+            System.out.println("DEBUG: k = " + k + "; n = " + n);
+            result = factorial(n) / factorial(n-k);
+
+            if (result > M) {
+                return n - 1;
+            }
+
+            n++;
+        }
+
+        return 0;
+    }
+
+    private static long factorial(long n) {
+
+        long fact = 1;
+
+        for(long i = 1; i <= n; i++) {
+            fact *= i;
+        }
+
+        return fact;
     }
 
 }
