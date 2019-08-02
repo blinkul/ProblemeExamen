@@ -1,4 +1,4 @@
-package filtrucuvinte;
+package aranjamenteproduse;
 
 import java.math.BigInteger;
 import java.util.Scanner;
