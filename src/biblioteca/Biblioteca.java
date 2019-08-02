@@ -1,18 +1,19 @@
-package filtrucuvinte;
+package biblioteca;
 
+import java.awt.print.Book;
 import java.util.*;
 
 public class Biblioteca {
 
     private Scanner inputScanner = new Scanner(System.in);
-    private List<Batch> books = new ArrayList<>();
-    private Map<Integer, List<Integer>> shelves = new HashMap<>();
+    private List<Shelve> shelves = new LinkedList<>();
+    private List<Book> books = new LinkedList<>();
     private int D;
     private int k;
     private int n, p;
     private String separator = " ";
 
-    // restictions
+    // restrictions
     private final int MIN_D = 50;
     private final int MAX_D = 10000;
     private final int MIN_P = 1;
@@ -31,16 +32,11 @@ public class Biblioteca {
             biblioteca.sortBooks();
             biblioteca.returnResult();
 
-//            biblioteca.showList();
-
         } else {
 
             biblioteca.readInput();
             biblioteca.sortBooks();
             biblioteca.returnResult();
-
-//            biblioteca.showList();
-
         }
 
     }
@@ -48,11 +44,23 @@ public class Biblioteca {
     private void loadTestData() {
 
         D = 200; k = 5;
-        books.add(new Batch(2,130)); // D k
-        books.add(new Batch(4, 120)); // n p
-        books.add(new Batch(2, 80));
-        books.add(new Batch(3, 60));
-        books.add(new Batch(7, 50));
+
+        List<String> inputs = new ArrayList<>();
+        inputs.add("2 130");
+        inputs.add("4 120");
+        inputs.add("2 80");
+        inputs.add("3 60");
+        inputs.add("7 50");
+
+        for (String s : inputs) {
+
+            int total = Integer.valueOf(s.split(separator)[0]);
+            int pages = Integer.valueOf(s.split(separator)[1]);
+
+            for (int i = 0; i < total; i++) {
+                books.add(new Book(pages));
+            }
+        }
 
     }
 
@@ -61,8 +69,8 @@ public class Biblioteca {
         String firstInput = inputScanner.nextLine();
         String input;
 
-        D = Integer.valueOf(firstInput.split(separator)[0]);
-        k = Integer.valueOf(firstInput.split(separator)[1]);
+        D = Integer.valueOf(firstInput.split(separator)[0]); //total page capacity on shelf
+        k = Integer.valueOf(firstInput.split(separator)[1]); //different book sizes
 
         if ( D < MIN_D || D > MAX_D ) {
             return;
@@ -74,11 +82,13 @@ public class Biblioteca {
                 n = Integer.valueOf(input.split(separator)[0]);
                 p = Integer.valueOf(input.split(separator)[1]);
 
-                if ( p < MIN_P || p > MAX_P || n < MIN_N || n > MAX_N || p < D) {
+                if ( p < MIN_P || p > MAX_P || n < MIN_N || n > MAX_N || p > D) {
                     continue;
                 }
 
-                books.add(new Batch(n, p));
+                for (int b = 0; b < n; b++) {
+                    books.add(new Book(p));
+                }
             }
         }
 
@@ -86,37 +96,77 @@ public class Biblioteca {
 
     private void sortBooks() {
 
-        for (Batch batch : books) {
+        if (books == null) {
+            return;
+        }
 
-            for ( List<Integer> shelve : shelves.values() ) {
+        Shelve currentShelve;
 
-                // poate shelve trebuie sa fie obiect
+        while ( !books.isEmpty() ) {
 
+            // create first shelve
+            if (shelves.isEmpty()) {
+                shelves.add(new Shelve(D));
             }
 
+            currentShelve = shelves.get(shelves.size()-1);
+            List<Book> booksToBeRemoved = new LinkedList<>();
+
+            for (Book book : books) {
+
+                if (book.pages_p <= currentShelve.capacityLeft) {
+                    currentShelve.books.add(book);
+                    currentShelve.capacityLeft -= book.pages_p;
+                    booksToBeRemoved.add(book);
+                }
+            }
+
+            books.removeAll(booksToBeRemoved);
+            shelves.add(new Shelve(D));
         }
 
     }
 
-    private void returnResult() {}
+    private void returnResult() {
 
-    private void showList() {
-        for ( Batch entry : books ) {
-            System.out.println(entry.number_n + " " + entry.pages_p);
+        StringBuilder sb = new StringBuilder();
+
+        for (Shelve shelve : shelves ) {
+
+            //empty the sb
+            sb.delete(0, sb.capacity());
+
+            //add all books from one shelve to sb to be outputted
+            for ( int i = 0; i < shelve.books.size(); i++ ) {
+                sb.append(shelve.books.get(i).pages_p);
+
+                //append a space only if is not last book on the shelve
+                if(i < shelve.books.size() - 1) {
+                    sb.append(" ");
+                }
+            }
+
+            // output books pages on shelve
+            System.out.println(sb.toString());
         }
     }
 
-    //class to store rows
-    class Batch {
-
-        private int number_n;
+    class Book {
         private int pages_p;
 
-        public Batch(int n, int p) {
-            number_n = n;
+        private Book(int p) {
             pages_p = p;
         }
+    }
 
+    //class to store output organised shelves
+    class Shelve {
+        private int capacityLeft;
+        private List<Book> books = new LinkedList<>();
+
+        private Shelve(int capacity) {
+            this.capacityLeft = capacity;
+        }
     }
 
     // minimizarea rafturilor necesare
