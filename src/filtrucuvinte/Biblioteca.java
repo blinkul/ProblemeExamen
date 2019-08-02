@@ -1,8 +1,121 @@
 package filtrucuvinte;
 
+import java.util.*;
+
 public class Biblioteca {
 
+    private Scanner inputScanner = new Scanner(System.in);
+    private List<Batch> books = new ArrayList<>();
+    private Map<Integer, List<Integer>> shelves = new HashMap<>();
+    private int D;
+    private int k;
+    private int n, p;
+    private String separator = " ";
+
+    // restictions
+    private final int MIN_D = 50;
+    private final int MAX_D = 10000;
+    private final int MIN_P = 1;
+    private final int MAX_P = 1000;
+    private final int MIN_N = 1;
+    private final int MAX_N = 100;
+
     public static void main(String[] args) {
+
+        boolean debug = true;
+        Biblioteca biblioteca = new Biblioteca();
+
+        if(debug) {
+
+            biblioteca.loadTestData();
+            biblioteca.sortBooks();
+            biblioteca.returnResult();
+
+//            biblioteca.showList();
+
+        } else {
+
+            biblioteca.readInput();
+            biblioteca.sortBooks();
+            biblioteca.returnResult();
+
+//            biblioteca.showList();
+
+        }
+
+    }
+
+    private void loadTestData() {
+
+        D = 200; k = 5;
+        books.add(new Batch(2,130)); // D k
+        books.add(new Batch(4, 120)); // n p
+        books.add(new Batch(2, 80));
+        books.add(new Batch(3, 60));
+        books.add(new Batch(7, 50));
+
+    }
+
+    private void readInput() {
+
+        String firstInput = inputScanner.nextLine();
+        String input;
+
+        D = Integer.valueOf(firstInput.split(separator)[0]);
+        k = Integer.valueOf(firstInput.split(separator)[1]);
+
+        if ( D < MIN_D || D > MAX_D ) {
+            return;
+        }
+
+        if(k > 0) {
+            for (int i = 0; i < k; i++) {
+                input = inputScanner.nextLine();
+                n = Integer.valueOf(input.split(separator)[0]);
+                p = Integer.valueOf(input.split(separator)[1]);
+
+                if ( p < MIN_P || p > MAX_P || n < MIN_N || n > MAX_N || p < D) {
+                    continue;
+                }
+
+                books.add(new Batch(n, p));
+            }
+        }
+
+    }
+
+    private void sortBooks() {
+
+        for (Batch batch : books) {
+
+            for ( List<Integer> shelve : shelves.values() ) {
+
+                // poate shelve trebuie sa fie obiect
+
+            }
+
+        }
+
+    }
+
+    private void returnResult() {}
+
+    private void showList() {
+        for ( Batch entry : books ) {
+            System.out.println(entry.number_n + " " + entry.pages_p);
+        }
+    }
+
+    //class to store rows
+    class Batch {
+
+        private int number_n;
+        private int pages_p;
+
+        public Batch(int n, int p) {
+            number_n = n;
+            pages_p = p;
+        }
 
     }
 
